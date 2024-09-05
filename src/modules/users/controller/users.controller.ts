@@ -8,11 +8,13 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from '../provider/users.service';
 import { CreateUserDto } from '../dto/createUsers.dto';
 import { UpdateUsersDto } from '../dto/updateUsers.dto';
+import { AuthGuard } from 'src/guards/auth.guards';
 
 export interface userDetails {
   id: number;
@@ -20,6 +22,7 @@ export interface userDetails {
 }
 
 @Controller('users')
+@UseGuards(AuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
