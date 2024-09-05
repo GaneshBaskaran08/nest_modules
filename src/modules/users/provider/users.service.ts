@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { userDetails } from '../controller/users.controller';
+import { CreateUserDto } from '../dto/createUsers.dto';
+import { UpdateUsersDto } from '../dto/updateUsers.dto';
 
 @Injectable()
 export class UsersService {
@@ -15,12 +16,12 @@ export class UsersService {
     return { id: id };
   }
 
-  createUser(data: userDetails) {
-    return data;
+  createUser(createUserDto: CreateUserDto) {
+    return createUserDto;
   }
 
-  updateUser(id: number, data: userDetails) {
-    return { ...data, id: id };
+  updateUser(id: number, updateUsersDto: UpdateUsersDto) {
+    if(id) return { ...updateUsersDto };
   }
 
   deleteUser(id: number) {
