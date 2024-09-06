@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
   Param,
   ParseIntPipe,
   Patch,
@@ -20,23 +19,24 @@ import { UpdateUsersDto } from '../dto/updateUsers.dto';
 import { AuthGuard } from 'src/guards/auth.guards';
 import { LoggingInterceptor } from 'src/Interceptors/logging.interceptor';
 import { HttpExceptionFilter } from 'src/exceptionFilters/custom.exception';
+import { Users } from 'src/database/entities/user.entity';
 
 export interface userDetails {
   id: number;
   name: string;
 }
-// @UseInterceptors(LoggingInterceptor) // full rout interceptor // Controller-Level
+// @UseInterceptors(LoggingInterceptor) // full route interceptor // Controller-Level
 @Controller('users')
 @UseGuards(AuthGuard) // used for auth perpose
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService ) {}
 
   @UseFilters(HttpExceptionFilter) // custom filter for status code and error handeling  
-  @UseInterceptors(LoggingInterceptor) // we can set in three way in contoller top full rout or seprate rout or in globale rout // Method-Level
+  @UseInterceptors(LoggingInterceptor) // we can set in three way in contoller top full route or seprate route or in globale route // Method-Level
   @Get()
-  findAll(): string[] {
+  findAll(): Promise<Users[]> {
     return this.usersService.findAll();
-    // throw new HttpException('Forbidden', 403); // if error comes in rout it will show error in custom filters
+    // throw new HttpException('Forbidden', 403); // if error comes in route it will show error in custom filters
   }
 
   @Get('/name')
