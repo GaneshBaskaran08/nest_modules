@@ -29,13 +29,13 @@ export interface userDetails {
 @Controller('users')
 @UseGuards(AuthGuard) // used for auth perpose
 export class UsersController {
-  constructor(private readonly usersService: UsersService ) {}
+  constructor(private readonly usersService: UsersService) {}
 
-  @UseFilters(HttpExceptionFilter) // custom filter for status code and error handeling  
+  @UseFilters(HttpExceptionFilter) // custom filter for status code and error handeling
   @UseInterceptors(LoggingInterceptor) // we can set in three way in contoller top full route or seprate route or in globale route // Method-Level
   @Get()
-  findAll(): Promise<Users[]> {
-    return this.usersService.findAll();
+  async findAll(): Promise<Users[]> {
+    return await this.usersService.findAll();
     // throw new HttpException('Forbidden', 403); // if error comes in route it will show error in custom filters
   }
 
@@ -45,25 +45,25 @@ export class UsersController {
   }
 
   @Get(':id')
-  findById(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findById(id);
+  async findById(@Param('id', ParseIntPipe) id: number): Promise<Users> {
+    return await this.usersService.findById(id);
   }
 
   @Post()
-  createUser(@Body(ValidationPipe) createUserDto: CreateUserDto) {
-    return this.usersService.createUser(createUserDto);
+  async createUser(@Body(ValidationPipe) createUserDto: CreateUserDto) {
+    return await this.usersService.createUser(createUserDto);
   }
 
   @Patch(':id')
-  updateUser(
+  async updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body(ValidationPipe) updateUsersDto: UpdateUsersDto,
   ) {
-    return this.usersService.updateUser(id, updateUsersDto);
+    return await this.usersService.updateUser(id, updateUsersDto);
   }
 
   @Delete(':id')
-  deleteUser(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.deleteUser(id);
+  async deleteUser(@Param('id', ParseIntPipe) id: number) {
+    return await this.usersService.deleteUser(id);
   }
 }
