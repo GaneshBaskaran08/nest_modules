@@ -4,6 +4,7 @@ import { UpdateUsersDto } from '../dto/updateUsers.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/database/entities/user.entity';
+import { promises } from 'dns';
 
 // interface UserResponse extends User {}
 @Injectable()
@@ -13,8 +14,8 @@ export class UsersService {
     private userRepository: Repository<Users>,
   ) {}
 
-  findAll(): Promise<Users[]> {
-    const listUsers = this.userRepository.find();
+  async findAll(): Promise<Users[]> {
+    const listUsers = await this.userRepository.find();
     return listUsers;
   }
 
@@ -22,19 +23,32 @@ export class UsersService {
     return { name: name };
   }
 
-  findById(id: number) {
-    return { id: id };
+  async findById(id: number): Promise<Users> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    return user;
   }
 
-  createUser(createUserDto: CreateUserDto) {
-    return createUserDto;
+  async createUser(createUserDto: CreateUserDto): Promise<Users> {
+    const createUser = await this.userRepository.save(createUserDto);
+    return createUser;
   }
 
-  updateUser(id: number, updateUsersDto: UpdateUsersDto) {
-    if (id) return { ...updateUsersDto };
+  async updateUser(id: number, updateUsersDto: UpdateUsersDto): Promise<Users> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    this.userRepository.merge(user, updateUsersDto);
+    const updatedUser = await this.userRepository.save(user);
+    return updatedUser;
   }
 
-  deleteUser(id: number) {
+  async deleteUser(id: number) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    this.userRepository.remove(user);
     return { id: id, isDeleted: true };
   }
 }
